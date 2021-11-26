@@ -7,7 +7,7 @@ const logger = require("morgan");
 const mongoose = require("mongoose");
 const passport = require("passport");
 const jwtStrategy = require("./strategies/jwt.js");
-const indexRouter = require("./routes/indexRouter");
+const userRouter = require("./routes/userRouter");
 const authRouter = require("./routes/authRouter");
 const postsRouter = require("./routes/postsRouter");
 const adminRouter = require("./routes/adminRouter");
@@ -28,7 +28,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(passport.initialize());
-app.use("/", indexRouter);
+app.use(
+    "/user",
+    passport.authenticate("jwt", { session: false }),
+
+    userRouter
+);
 app.use("/auth", authRouter);
 app.use("/posts", postsRouter);
 app.use(
