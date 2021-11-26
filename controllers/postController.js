@@ -2,7 +2,7 @@ const Post = require("../modules/Post");
 const { body, validationResult } = require("express-validator");
 
 exports.getAllPosts = (req, res, next) => {
-    Post.find().exec((err, posts) => {
+    Post.find({ published: true }).exec((err, posts) => {
         if (err) next(err);
         res.json(posts);
     });
@@ -118,7 +118,8 @@ exports.deletePost = (req, res, next) => {
 exports.getPost = (req, res, next) => {
     Post.findById(req.params.id).exec((err, post) => {
         if (err) next(err);
-        if (!post) res.status(404).json({ msg: "Post not found" });
+        if (!post || !post.published)
+            res.status(404).json({ msg: "Post not found" });
         res.json(post);
     });
 };
