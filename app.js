@@ -3,6 +3,7 @@ const createError = require("http-errors");
 const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
+const cors = require("cors");
 const logger = require("morgan");
 const mongoose = require("mongoose");
 const passport = require("passport");
@@ -20,8 +21,7 @@ db.on("error", console.error.bind(console, "mongo connection error"));
 
 passport.use(jwtStrategy);
 const app = express();
-
-// view engine setup
+app.use(cors());
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
