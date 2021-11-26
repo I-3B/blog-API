@@ -7,12 +7,13 @@ exports.getAllComments = (req, res, next) => {
         res.json(comments);
     });
 };
-exports.getComment = (req, res, next) => {
-    Comment.findById(req.params.id).exec((err, comment) => {
-        if (err) next(err);
-        if (!comment) res.status(404).json({ msg: "Comment not found" });
-        res.json(comment);
-    });
+exports.getAllCommentsCount = (req, res, next) => {
+    Comment.find({ post: req.params.postId })
+        .count()
+        .exec((err, commentsCount) => {
+            if (err) next(err);
+            res.json({ post: req.params.postId, commentsCount });
+        });
 };
 exports.postComment = [
     body("content")
@@ -42,3 +43,11 @@ exports.postComment = [
         });
     },
 ];
+
+exports.getComment = (req, res, next) => {
+    Comment.findById(req.params.id).exec((err, comment) => {
+        if (err) next(err);
+        if (!comment) res.status(404).json({ msg: "Comment not found" });
+        res.json(comment);
+    });
+};

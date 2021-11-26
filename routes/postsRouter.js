@@ -23,6 +23,8 @@ router.delete(
 );
 
 router.get("/:postId/comments", commentController.getAllComments);
+router.get("/:postId/comments/count", commentController.getAllCommentsCount);
+
 router.post(
     "/:postId/comments",
     passport.authenticate("jwt", { session: false }),
