@@ -119,37 +119,38 @@ exports.login = [
                 msg: "login failed",
                 errors: [...errors.array()],
             });
-        }
-        User.findOne({ email: req.body.email }).exec((err, user) => {
-            if (err) next(err);
-            if (user) {
-                bcrypt.compare(
-                    req.body.password,
-                    user.password,
-                    (err, result) => {
-                        if (err) next(err);
-                        if (result) {
-                            const secret = process.env.SECRET; //normally stored in process.env.secret
-                            const token = jwt.sign(
-                                { email: user.email },
-                                secret,
-                                {
-                                    expiresIn: "30 days",
-                                }
-                            );
-                            return res.status(200).json({
-                                msg: "Auth Passed",
-                                token,
-                            });
-                        } else {
-                            res.status(400).json({ msg: "Wrong password" });
+        } else {
+            User.findOne({ email: req.body.email }).exec((err, user) => {
+                if (err) next(err);
+                if (user) {
+                    bcrypt.compare(
+                        req.body.password,
+                        user.password,
+                        (err, result) => {
+                            if (err) next(err);
+                            if (result) {
+                                const secret = process.env.SECRET;
+                                const token = jwt.sign(
+                                    { email: user.email },
+                                    secret,
+                                    {
+                                        expiresIn: "30 days",
+                                    }
+                                );
+                                return res.status(200).json({
+                                    msg: "Auth Passed",
+                                    token,
+                                });
+                            } else {
+                                res.status(400).json({ msg: "Wrong password" });
+                            }
                         }
-                    }
-                );
-            } else {
-                res.status(404).json({ msg: "user not found" });
-            }
-        });
+                    );
+                } else {
+                    res.status(404).json({ msg: "user not found" });
+                }
+            });
+        }
     },
 ];
 exports.admin = [
@@ -161,13 +162,14 @@ exports.admin = [
                 msg: "admin login failed",
                 errors: [...errors.array()],
             });
-        }
-        if (req.body.password === process.env.ADMIN) {
+        } else if (req.body.password === process.env.ADMIN) {
             User.findByIdAndUpdate(req.user._id, { admin: true }, (err) => {
                 if (err) next(err);
                 req.user.admin = true;
                 res.json({ msg: `${req.user.username} is an admin now.` });
             });
+        } else {
+            res.json({ msg: "Wrong admin password" });
         }
     },
 ];

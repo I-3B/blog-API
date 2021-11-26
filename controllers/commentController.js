@@ -4,7 +4,7 @@ const { body, validationResult } = require("express-validator");
 exports.getAllComments = (req, res, next) => {
     Comment.find({ post: req.params.postId }).exec((err, comments) => {
         if (err) next(err);
-        res.json(comments);
+        else res.json(comments);
     });
 };
 exports.getAllCommentsCount = (req, res, next) => {
@@ -31,23 +31,24 @@ exports.postComment = [
                 msg: "comment posting failed",
                 errors: [...errors.array()],
             });
+        } else {
+            new Comment({
+                author: req.user.username,
+                post: req.params.postId,
+                content: req.body.content,
+                publishedAt: Date.now(),
+            }).save((err, comment) => {
+                if (err) next(err);
+                res.json({ msg: "comment got posted successfully", comment });
+            });
         }
-        new Comment({
-            author: req.user.username,
-            post: req.params.postId,
-            content: req.body.content,
-            publishedAt: Date.now(),
-        }).save((err, comment) => {
-            if (err) next(err);
-            res.json({ msg: "comment got posted successfully", comment });
-        });
     },
 ];
 
 exports.getComment = (req, res, next) => {
     Comment.findById(req.params.id).exec((err, comment) => {
         if (err) next(err);
-        if (!comment) res.status(404).json({ msg: "Comment not found" });
-        res.json(comment);
+        else if (!comment) res.status(404).json({ msg: "Comment not found" });
+        else res.json(comment);
     });
 };
