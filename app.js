@@ -31,7 +31,6 @@ app.use(passport.initialize());
 app.use(
     "/user",
     passport.authenticate("jwt", { session: false }),
-
     userRouter
 );
 app.use("/auth", authRouter);
