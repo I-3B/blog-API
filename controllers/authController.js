@@ -139,6 +139,8 @@ exports.login = [
                                 );
                                 return res.status(200).json({
                                     msg: "Auth Passed",
+                                    username: user.username,
+                                    admin: user.admin,
                                     token,
                                 });
                             } else {
@@ -159,17 +161,20 @@ exports.admin = [
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             res.status(400).json({
-                msg: "admin login failed",
+                msg: "admin signup failed",
                 errors: [...errors.array()],
             });
         } else if (req.body.password === process.env.ADMIN) {
             User.findByIdAndUpdate(req.user._id, { admin: true }, (err) => {
                 if (err) next(err);
                 req.user.admin = true;
-                res.json({ msg: `${req.user.username} is an admin now.` });
+                res.json({
+                    msg: `${req.user.username} is an admin now.`,
+                    passed: true,
+                });
             });
         } else {
-            res.json({ msg: "Wrong admin password" });
+            res.json({ msg: "Wrong admin password", passed: false });
         }
     },
 ];
