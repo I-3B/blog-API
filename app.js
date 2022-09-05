@@ -29,10 +29,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "build")));
 app.use(passport.initialize());
-app.use("/user", passport.authenticate("jwt", { session: false }), userRouter);
-app.use("/auth", authRouter);
-app.use("/posts", postsRouter);
-app.use("/admin", passport.authenticate("jwt", { session: false }), adminRouter);
+app.use("/api/user", passport.authenticate("jwt", { session: false }), userRouter);
+app.use("/api/auth", authRouter);
+app.use("/api/posts", postsRouter);
+app.use("/api/admin", passport.authenticate("jwt", { session: false }), adminRouter);
 app.get("*", function (req, res) {
     res.sendFile(path.join(__dirname, "build", "index.html"));
 });
