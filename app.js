@@ -29,6 +29,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "build")));
 app.use(passport.initialize());
+app.get("/api/", (req, res) => {
+    res.sendStatus(200);
+});
 app.use("/api/user", passport.authenticate("jwt", { session: false }), userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/posts", postsRouter);
